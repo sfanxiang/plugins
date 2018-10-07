@@ -140,6 +140,7 @@ public class CameraPlugin implements MethodCallHandler {
       case "init":
         if (camera != null) {
           camera.close();
+          camera = null;
         }
         result.success(null);
         break;
@@ -178,6 +179,12 @@ public class CameraPlugin implements MethodCallHandler {
           String resolutionPreset = call.argument("resolutionPreset");
           if (camera != null) {
             camera.close();
+            camera = null;
+            if (this.activity != null && this.activityLifecycleCallbacks != null) {
+              this.activity
+                  .getApplication()
+                  .unregisterActivityLifecycleCallbacks(this.activityLifecycleCallbacks);
+            }
           }
           camera = new Camera(cameraName, resolutionPreset, result);
           this.activity
@@ -205,6 +212,7 @@ public class CameraPlugin implements MethodCallHandler {
         {
           if (camera != null) {
             camera.dispose();
+            camera = null;
           }
           if (this.activity != null && this.activityLifecycleCallbacks != null) {
             this.activity
